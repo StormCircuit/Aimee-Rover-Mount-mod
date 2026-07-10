@@ -17,6 +17,10 @@ using Assets.Scripts.Objects.Motherboards;
 using Assets.Scripts.Objects.Pipes;
 using Assets.Scripts.Util;
 using Assets.Scripts.Vehicles;
+using Assets.Scripts.Events;
+using Assets.Scripts.Genetics;
+using Assets.Scripts.Inventory;
+using Assets.Scripts.Serialization;
 using TerrainSystem;
 using Trading;
 using UnityEngine;
@@ -29,29 +33,37 @@ using HarmonyLib;
 
 namespace aimeeUberMod
 {
-    [HarmonyPatch(typeof(Thing))]
-    [HarmonyPatch("Awake")]
+    [HarmonyPatch(typeof(RobotMining))]
+    [HarmonyPatch("AttackWith")]
     public class robotMiningPatch
     {
-        [HarmonyPatch("AttackWith")]
         [HarmonyPrefix]
-        public static void roverPatch(DynamicThing __instance, Attack attack, bool doAction = true)
+        public static DelayedActionInstance attackWithPatch(RobotMining __instance, Attack attack, ref Thing.DelayedActionInstance __result, bool doAction = true)
         {
-            aimeeUberModPlugin.Log.LogInfo("Patching aimee rover mount");
-            Rover rover = Rover.IsNearby(__instance) as Rover;
-            if (attack.SourceItem is Wrench && rover != null && __instance is RobotMining)
+            if (attack.SourceItem != null && attack.SourceItem is Wrench && Rover.IsNearby(__instance) is Rover rover)
             {
-                //move aimee to world if she has a parentslot
-                if (__instance.ParentSlot != null)
+                aimeeUberModPlugin.Log?.LogInfo("Patching aimee rover mount");
+
+                Thing.DelayedActionInstance result = new Thing.DelayedActionInstance
                 {
-                    OnServer.MoveToWorld(__instance);
-                }
-                //else she has no parent, attach her when using wrench
-                else
+                    Duration = 1f,
+                    ActionMessage = ((__instance.ParentSlot != null) ? ActionStrings.Disconnect : ActionStrings.Connect)
+                };
+
+                if (doAction)
                 {
-                    rover.Attach(__instance);
+                    if (__instance.ParentSlot == null)
+                    {
+                        rover.Attach(__instance);
+                    }
+                    else
+                    {
+                        OnServer.MoveToWorld(__instance);
+                    }
                 }
+                return result;
             }
+            return result;
         }
     }
 }
