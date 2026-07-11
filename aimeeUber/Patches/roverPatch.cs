@@ -28,13 +28,11 @@ using HarmonyLib;
 
 namespace aimeeUberMod
 {
-    [HarmonyPatch(typeof(Rover))]
-    [HarmonyPatch("Awake")]
-    public class roverPatch
+    [HarmonyPatch(typeof(Rover), "Attach")]
+    public static class RoverAttachPatch
     {
-        [HarmonyPatch("Attach")]
-        [HarmonyPostfix]
-        public static bool attachPatch(ref bool __result, Rover __instance, Thing target = null)
+        [HarmonyPrefix]
+        public static bool Prefix(Rover __instance, Thing target, ref bool __result)
         {
             if (target is RobotMining)
             {
@@ -43,11 +41,13 @@ namespace aimeeUberMod
                     if (__instance.ConnectionSlots[i].TryAttachTank(target))
                     {
                         __result = true;
-                        return __result;
+                        return false;
                     }
                 }
+                __result = false;
+                return false;
             }
-            return __result;
+            return true;
         }
     }
 }
