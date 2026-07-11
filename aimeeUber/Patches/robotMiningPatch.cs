@@ -38,32 +38,33 @@ namespace aimeeUberMod
     public class robotMiningPatch
     {
         [HarmonyPrefix]
-        public static DelayedActionInstance attackWithPatch(RobotMining __instance, Attack attack, ref Thing.DelayedActionInstance __result, bool doAction = true)
+        public static bool attackWithPatch(RobotMining __instance, Attack attack, ref Thing.DelayedActionInstance __result, bool doAction = true)
         {
-            if (attack.SourceItem != null && attack.SourceItem is Wrench && Rover.IsNearby(__instance) is Rover rover)
+            if (attack.SourceItem is Wrench && Rover.IsNearby(__instance) is Rover rover)
             {
                 aimeeUberModPlugin.Log?.LogInfo("Patching aimee rover mount");
-
-                Thing.DelayedActionInstance result = new Thing.DelayedActionInstance
+                __result = new Thing.DelayedActionInstance
                 {
                     Duration = 1f,
                     ActionMessage = ((__instance.ParentSlot != null) ? ActionStrings.Disconnect : ActionStrings.Connect)
                 };
 
-                if (doAction)
+                if (!doAction)
                 {
-                    if (__instance.ParentSlot == null)
-                    {
-                        rover.Attach(__instance);
-                    }
-                    else
-                    {
-                        OnServer.MoveToWorld(__instance);
-                    }
+                    return false;
                 }
-                return result;
+
+                if (__instance.ParentSlot != null)
+                {
+                    OnServer.MoveToWorld(__instance);
+                }
+                else
+                {
+                    rover.Attach(__instance);
+                }
+                return false;
             }
-            return result;
+            return true;
         }
     }
 }

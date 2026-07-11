@@ -34,7 +34,7 @@ namespace aimeeUberMod
     {
         [HarmonyPatch("Attach")]
         [HarmonyPostfix]
-        public static bool attachPatch(bool __result, Rover __instance, Thing target = null)
+        public static bool attachPatch(ref bool __result, Rover __instance, Thing target = null)
         {
             if (target is RobotMining)
             {
