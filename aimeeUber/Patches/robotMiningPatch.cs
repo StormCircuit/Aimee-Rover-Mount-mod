@@ -37,12 +37,14 @@ namespace aimeeUberMod
     [HarmonyPatch("AttackWith")]
     public class robotMiningPatch
     {
+        private static readonly Dictionary<long, float> LastMountByReferenceId = new Dictionary<long, float>();
+        private const float ImmediateDisconnectWindowSeconds = 0.25f;
+
         [HarmonyPrefix]
         public static bool attackWithPatch(RobotMining __instance, Attack attack, ref Thing.DelayedActionInstance __result, bool doAction = true)
         {
-            if (attack.SourceItem is Wrench && Rover.IsNearby(__instance) is Rover rover)
+            if (attack.SourceItem is Wrench)
             {
-                aimeeUberModPlugin.Log?.LogInfo("Patching aimee rover mount");
                 __result = new Thing.DelayedActionInstance
                 {
                     Duration = 1f,
@@ -56,12 +58,29 @@ namespace aimeeUberMod
 
                 if (__instance.ParentSlot != null)
                 {
-                    OnServer.MoveToWorld(__instance);
+                    if (__instance.ParentSlot.Parent is Rover)
+                    {
+                        if (LastMountByReferenceId.TryGetValue(__instance.ReferenceId, out float lastMountTime) && Time.time - lastMountTime <= ImmediateDisconnectWindowSeconds)
+                        {
+                            return false;
+                        }
+
+                        OnServer.MoveToWorld(__instance);
+                        LastMountByReferenceId.Remove(__instance.ReferenceId);
+                        return false;
+                    }
+
+                    return true;
                 }
-                else
+
+                if (Rover.IsNearby(__instance) is Rover rover)
                 {
-                    rover.Attach(__instance);
+                    if (rover.Attach(__instance) && __instance.ParentSlot != null)
+                    {
+                        LastMountByReferenceId[__instance.ReferenceId] = Time.time;
+                    }
                 }
+
                 return false;
             }
             return true;
