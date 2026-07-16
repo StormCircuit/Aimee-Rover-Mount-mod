@@ -3,8 +3,7 @@
   <Name>Aimee Rideshare</Name>
   <Author>StormCircuit</Author>
   <Version>0.0.0.1</Version>
-  <Description>Mod to put aimee on rover
+  <Description>Allows wrenching Aimee to the back of a rover. Simply bring Aimee near your rover and use your wrench on her.
 
   </Description>
-  <WorkshopHandle>3685899008</WorkshopHandle>
 </ModMetadata>
