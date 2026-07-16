@@ -20,7 +20,8 @@ namespace aimeeUberMod
 
       public static ManualLogSource Log;
       public static Boolean modEnabled;
-  public const float RoverMountOffsetY = -0.5f;
+        public const float RoverMountOffsetY = -0.5f;
+      public const float RoverMountPitchTrimDegrees = 25f;
 
       void Awake()
       {
@@ -45,6 +46,6 @@ namespace aimeeUberMod
             Debug.LogError(e.ToString());
           }
         }
-      }    
-  }
+      }
+    }
 }
