@@ -42,6 +42,7 @@ namespace aimeeUberMod
         public List<ColliderState> ColliderStates;
     }
 
+    // fix her position and rotation when mounted on rover
     [HarmonyPatch(typeof(Rover), "OnChildEnterInventory")]
     public static class RoverChildEnterInventoryPatch
     {
@@ -150,6 +151,7 @@ namespace aimeeUberMod
         }
     }
 
+    // restore colliders after leaving rover
     [HarmonyPatch(typeof(Rover), "OnChildExitInventory")]
     public static class RoverChildExitInventoryPatch
     {
@@ -181,6 +183,7 @@ namespace aimeeUberMod
         }
     }
 
+    // patch rover to send Aimee to the tank slots.
     [HarmonyPatch(typeof(Rover), "Attach")]
     public static class RoverAttachPatch
     {

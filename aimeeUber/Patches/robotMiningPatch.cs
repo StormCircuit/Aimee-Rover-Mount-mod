@@ -51,6 +51,7 @@ namespace aimeeUberMod
         }
     }
 
+    // patch Aimee's attackWith logic so that she can accept the wrench
     [HarmonyPatch(typeof(RobotMining))]
     [HarmonyPatch("AttackWith")]
     public static class robotMiningPatch
@@ -120,6 +121,8 @@ namespace aimeeUberMod
         }
     }
 
+    // patch Aimee's Execute logic so that she doesn't run her programmable chip to avoid transform desync.
+    //Solves Issue 6
     [HarmonyPatch(typeof(RobotMining), "Execute")]
     public static class RobotMiningExecutePatch
     {
@@ -131,6 +134,8 @@ namespace aimeeUberMod
         }
     }
 
+    // Also patch her setLogicValue so external IC fails
+    //Solves Issue 6
     [HarmonyPatch(typeof(RobotMining), "SetLogicValue")]
     public static class RobotMiningSetLogicValuePatch
     {
@@ -142,6 +147,8 @@ namespace aimeeUberMod
         }
     }
 
+    // Patch her to be incapable of writing logic to prevent internal IC from writing
+    //Solves Issue 6
     [HarmonyPatch(typeof(RobotMining), "CanLogicWrite")]
     public static class RobotMiningCanLogicWritePatch
     {
