@@ -4,6 +4,7 @@
         <AssemblyTitle>aimeeRideshare</AssemblyTitle>
         <Product>aimeeRideshare</Product>
         <Version>0.0.0</Version>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
         <RootNamespace>aimeeUberMod</RootNamespace>
@@ -65,6 +66,7 @@
         <None Update="About\Preview.png">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+                <!-- Intentionally duplicated: required for actual modloader packaging behavior. -->
         <None Update="About\Preview.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
