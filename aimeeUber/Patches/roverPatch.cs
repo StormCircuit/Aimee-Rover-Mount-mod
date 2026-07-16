@@ -39,6 +39,7 @@ namespace aimeeUberMod
     public static class RoverChildEnterInventoryPatch
     {
         private static readonly Dictionary<long, List<ColliderState>> AimeeColliderStatesByReferenceId = new Dictionary<long, List<ColliderState>>();
+        private static readonly HashSet<long> OffsetAppliedByReferenceId = new HashSet<long>();
 
         internal static IReadOnlyList<ColliderState> GetStates(long referenceId)
         {
@@ -52,6 +53,7 @@ namespace aimeeUberMod
         internal static void ClearStates(long referenceId)
         {
             AimeeColliderStatesByReferenceId.Remove(referenceId);
+            OffsetAppliedByReferenceId.Remove(referenceId);
         }
 
         [HarmonyPostfix]
@@ -60,6 +62,13 @@ namespace aimeeUberMod
             if (newChild is not RobotMining aimee)
             {
                 return;
+            }
+
+            if (!OffsetAppliedByReferenceId.Contains(aimee.ReferenceId))
+            {
+                Transform transform = aimee.transform;
+                transform.localPosition += new Vector3(0f, aimeeUberModPlugin.RoverMountOffsetY, 0f);
+                OffsetAppliedByReferenceId.Add(aimee.ReferenceId);
             }
 
             List<ColliderState> states = new List<ColliderState>(aimee._selfColliders.Count);
