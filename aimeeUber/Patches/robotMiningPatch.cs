@@ -38,7 +38,9 @@ namespace aimeeUberMod
     public class robotMiningPatch
     {
         private static readonly Dictionary<long, float> LastMountByReferenceId = new Dictionary<long, float>();
+        private static readonly Dictionary<long, float> LastDetachByReferenceId = new Dictionary<long, float>();
         private const float ImmediateDisconnectWindowSeconds = 0.25f;
+        private const float ReattachSuppressionWindowSeconds = 0.35f;
 
         [HarmonyPrefix]
         public static bool attackWithPatch(RobotMining __instance, Attack attack, ref Thing.DelayedActionInstance __result, bool doAction = true)
@@ -58,7 +60,8 @@ namespace aimeeUberMod
 
                 if (__instance.ParentSlot != null)
                 {
-                    if (__instance.ParentSlot.Parent is Rover)
+                    bool isMountedOnRover = __instance.ParentSlot.Parent is Rover || __instance.RootParent is Rover;
+                    if (isMountedOnRover)
                     {
                         if (LastMountByReferenceId.TryGetValue(__instance.ReferenceId, out float lastMountTime) && Time.time - lastMountTime <= ImmediateDisconnectWindowSeconds)
                         {
@@ -67,6 +70,10 @@ namespace aimeeUberMod
 
                         OnServer.MoveToWorld(__instance);
                         LastMountByReferenceId.Remove(__instance.ReferenceId);
+                        if (__instance.ParentSlot == null)
+                        {
+                            LastDetachByReferenceId[__instance.ReferenceId] = Time.time;
+                        }
                         return false;
                     }
 
@@ -75,9 +82,15 @@ namespace aimeeUberMod
 
                 if (Rover.IsNearby(__instance) is Rover rover)
                 {
+                    if (LastDetachByReferenceId.TryGetValue(__instance.ReferenceId, out float lastDetachTime) && Time.time - lastDetachTime <= ReattachSuppressionWindowSeconds)
+                    {
+                        return false;
+                    }
+
                     if (rover.Attach(__instance) && __instance.ParentSlot != null)
                     {
                         LastMountByReferenceId[__instance.ReferenceId] = Time.time;
+                        LastDetachByReferenceId.Remove(__instance.ReferenceId);
                     }
                 }
 
