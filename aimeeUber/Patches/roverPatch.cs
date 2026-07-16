@@ -86,7 +86,7 @@ namespace aimeeUberMod
                     IsTrigger = selfCollider.isTrigger,
                 });
 
-                selfCollider.isTrigger = true;
+                selfCollider.isTrigger = false;
                 selfCollider.enabled = true;
             }
 
