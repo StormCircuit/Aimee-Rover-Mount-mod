@@ -1,9 +1,14 @@
-<?xml version="1.0" encoding="utf8"?>
-<ModMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetadata xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Name>Aimee Rideshare</Name>
   <Author>StormCircuit</Author>
-  <Version>0.0.0.1</Version>
+  <Version>1.0.0.0</Version>
   <Description>Allows wrenching Aimee to the back of a rover. Simply bring Aimee near your rover and use your wrench on her.
-
+	Oh how a small description betrays the insanity that was required to accomplish this lol.
   </Description>
+  <ChangeLog xsi:nil="true" />
+  <WorkshopHandle>3765857971</WorkshopHandle>
+  <IsBetaProgramMod>false</IsBetaProgramMod>
+  <Tags />
+  <InGameDescription xsi:nil="true" />
 </ModMetadata>
